@@ -1,5 +1,4 @@
-import page as page
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_mail import Mail
@@ -56,6 +55,9 @@ class Posts(db.Model):
 
 @app.route("/")
 def home():
+    # flash("Well done sumit , keep going", "success")
+    # flash("You are fabulous and awesome", "danger")
+
     posts = Posts.query.filter_by().all()
     last = math.ceil(len(posts) / int(params['no_of_posts']))
     page = request.args.get('page')
@@ -141,7 +143,7 @@ def edit(sno):
                 return redirect('/edit/' + sno)
 
         post = Posts.query.filter_by(sno=sno).first()
-        return render_template('edit.html', params=params, post=post,sno=sno)
+        return render_template('edit.html', params=params, post=post, sno=sno)
 
 
 @app.route("/uploader", methods=['GET', 'POST'])
@@ -176,6 +178,7 @@ def contact():
         mail.send_message('New message from ' + name, sender=email,
                           recipients=[params['gmail-user']],
                           body=message + "\n" + phone)
+        flash('Your message has been sent successfully', 'success')
 
     return render_template('contact.html', params=params)
 
